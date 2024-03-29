@@ -1,0 +1,133 @@
+version: "3.3"
+services:
+  spark-master:
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_WORKLOAD=master
+
+  spark-worker-a:
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    ports:
+      - "9091:8080"
+      - "7000:7000"
+      - "4041:4040"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_DRIVER_MEMORY=4G
+      - SPARK_EXECUTOR_MEMORY=2G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-a
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  spark-worker-b:
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    ports:
+      - "9092:8080"
+      - "7001:7000"
+      - "4042:4040"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_DRIVER_MEMORY=4G
+      - SPARK_EXECUTOR_MEMORY=2G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-b
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  spark-worker-c:
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    ports:
+      - "9093:8080"
+      - "7002:7000"
+      - "4043:4040"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_DRIVER_MEMORY=4G
+      - SPARK_EXECUTOR_MEMORY=2G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-c
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  spark-worker-d:
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    ports:
+      - "9094:8080"
+      - "7003:7000"
+      - "4044:4040"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_DRIVER_MEMORY=4G
+      - SPARK_EXECUTOR_MEMORY=2G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-d
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  jupyter:
+    image: jupyter/pyspark-notebook:spark-3.4.0
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    depends_on:
+      - spark-master
+    volumes:
+       - ./jupyter_data:/home/jovyan/work
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
