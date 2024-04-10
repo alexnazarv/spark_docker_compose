@@ -10,8 +10,15 @@ RUN wget https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz && \
      ./configure --enable-optimizations && \
     make -j $(nproc) && \
     make altinstall && \
+    rm /usr/bin/python3 && \
+    ln -s python3.11 /usr/bin/python3 && \
     ln -s /usr/local/bin/python3.11 /usr/bin/python3.11 && \
-    ln -s python3.11 /usr/bin/python3
+    python3.11 -m ensurepip && \
+    ln -s /usr/local/bin/pip3.11 /usr/local/bin/pip3
+
+COPY ./requirements.txt .
+
+RUN pip3 install -r requirements.txt
 
 # Fix the value of PYTHONHASHSEED
 # Note: this is needed when you use Python 3.3 or greater

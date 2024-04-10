@@ -1,13 +1,14 @@
 version: "3.3"
 services:
   spark-master:
-    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0_v1
     ports:
       - "9090:8080"
       - "7077:7077"
     volumes:
        - ./apps:/opt/spark-apps
        - ./data:/opt/spark-data
+        - ./jupyter_data:/home/jovyan/work
     deploy:
       resources:
         limits:
@@ -18,7 +19,7 @@ services:
       - SPARK_WORKLOAD=master
 
   spark-worker-a:
-    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0_v1
     ports:
       - "9091:8080"
       - "7000:7000"
@@ -36,6 +37,7 @@ services:
     volumes:
        - ./apps:/opt/spark-apps
        - ./data:/opt/spark-data
+        - ./jupyter_data:/home/jovyan/work
     deploy:
       resources:
         limits:
@@ -43,7 +45,7 @@ services:
           memory: 2G
 
   spark-worker-b:
-    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0_v1
     ports:
       - "9092:8080"
       - "7001:7000"
@@ -61,6 +63,7 @@ services:
     volumes:
         - ./apps:/opt/spark-apps
         - ./data:/opt/spark-data
+        - ./jupyter_data:/home/jovyan/work
     deploy:
       resources:
         limits:
@@ -68,7 +71,7 @@ services:
           memory: 2G
 
   spark-worker-c:
-    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0_v1
     ports:
       - "9093:8080"
       - "7002:7000"
@@ -86,6 +89,7 @@ services:
     volumes:
         - ./apps:/opt/spark-apps
         - ./data:/opt/spark-data
+        - ./jupyter_data:/home/jovyan/work
     deploy:
       resources:
         limits:
@@ -93,7 +97,7 @@ services:
           memory: 2G
 
   spark-worker-d:
-    image: pyspark-standalone:python-3.11.4-spark-3.4.0
+    image: pyspark-standalone:python-3.11.4-spark-3.4.0_v1
     ports:
       - "9094:8080"
       - "7003:7000"
@@ -111,6 +115,7 @@ services:
     volumes:
         - ./apps:/opt/spark-apps
         - ./data:/opt/spark-data
+        - ./jupyter_data:/home/jovyan/work
     deploy:
       resources:
         limits:
@@ -131,3 +136,17 @@ services:
         limits:
           cpus: '1'
           memory: 2G
+
+  minio:
+    image: 'bitnami/minio:latest'
+    ports:
+      - '9010:9000'
+      - '9011:9001'
+    volumes:
+        - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=root12345
+
+volumes:
+  minio_data:
