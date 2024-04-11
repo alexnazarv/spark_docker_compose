@@ -143,10 +143,7 @@ services:
       - '9010:9000'
       - '9011:9001'
     volumes:
-        - minio_data:/data
+        - ./minio_data:/data
     environment:
       - MINIO_ROOT_USER=root
       - MINIO_ROOT_PASSWORD=root12345
-
-volumes:
-  minio_data:
